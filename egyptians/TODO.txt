@@ -1,0 +1,17 @@
+============
+create views
+============
+* login
+* register
+* manage roles
+* password reset
+  - user requested
+  - admin initiated
+* admin ability to create a new user
+
+
+=======================
+additional abstractions
+=======================
+manage roles on a user
+manage password resets
