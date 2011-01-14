@@ -11,7 +11,10 @@ class UserAuth(object):
         self.context = context
 
     def extract_credentials(self):
-        return self.context.password
+        return getattr(self.context, 'password', u'')
+
+    def update_credentials(self, password):
+        self.context.password = password
 
     def authenticate(self, password):
         return self.extract_credentials() == password

@@ -117,6 +117,12 @@ class UserAuthTests(unittest.TestCase):
         userauth = self._makeOne(user)
         self.assertEquals(u'flux capacitor', userauth.extract_credentials())
 
+    def test_userauth_update_credentials(self):
+        user = self._makeUser()
+        userauth = self._makeOne(user)
+        userauth.update_credentials(u'delorean')
+        self.assertEquals(u'delorean', userauth.extract_credentials())
+
     def test_userauth_authenticate(self):
         user = self._makeUser()
         userauth = self._makeOne(user)
