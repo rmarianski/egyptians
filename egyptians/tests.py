@@ -42,6 +42,48 @@ class UserFolderTests(unittest.TestCase):
         userfolder = self._makeOne()
         verifyObject(IUserFolder, userfolder)
 
+    def test_userfolder_add(self):
+        userfolder = self._makeOne()
+        user = self._makeUser(u'george')
+        userfolder.add_user(user)
+        self.failUnless(u'george' in userfolder.keys())
+
+    def test_userfolder_remove(self):
+        userfolder = self._makeOne()
+        user = self._makeUser(u'george')
+        userfolder.add_user(user)
+        self.failUnless(u'george' in userfolder.keys())
+        userfolder.remove_user(user)
+        self.failIf(u'george' in userfolder.keys())
+
+    def test_userfolder_userids(self):
+        userfolder = self._makeOne()
+        user1 = self._makeUser(u'george')
+        user2 = self._makeUser(u'lorraine')
+        userfolder.add_user(user1)
+        userfolder.add_user(user2)
+        userids = userfolder.userids
+        self.assertEquals(2, len(userids))
+        self.assertEquals(u'george', userids[0])
+        self.assertEquals(u'lorraine', userids[1])
+
+    def test_userfolder_users(self):
+        userfolder = self._makeOne()
+        user1 = self._makeUser(u'george')
+        user2 = self._makeUser(u'lorraine')
+        userfolder.add_user(user1)
+        userfolder.add_user(user2)
+        users = userfolder.users
+        self.assertEquals(2, len(users))
+        self.assertEquals(u'george', users[0].id)
+        self.assertEquals(u'lorraine', users[1].id)
+
+    def test_userfolder_get_user(self):
+        userfolder = self._makeOne()
+        user = self._makeUser(u'george')
+        userfolder.add_user(user)
+        self.assertEquals(u'george', userfolder.get_user(u'george').id)
+
 
 class UserInfoTests(unittest.TestCase):
 

@@ -10,17 +10,17 @@ class IUser(Interface):
 class IUserFolder(Interface):
     """a container for users"""
 
-    def add(user):
+    def add_user(user):
         """add a user"""
 
-    def remove(user):
+    def remove_user(user):
         """remove a user"""
 
-    def list():
-        """return a sequence of users"""
-
-    def get(userid):
+    def get_user(userid):
         """return the user specified by the id"""
+
+    userids = Attribute("sequence of userids in folder")
+    users = Attribute("sequence of user objects in folder")
 
 class IUserInfo(Interface):
     """provides some common user metadata"""

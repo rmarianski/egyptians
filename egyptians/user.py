@@ -14,16 +14,21 @@ class User(Persistent):
 class UserFolder(Folder):
     implements(IUserFolder)
 
-    def add(self, user):
+    def add_user(self, user):
         self[user.id] = user
 
-    def remove(self, user):
+    def remove_user(self, user):
         del self[user.id]
 
-    def list(self):
+    @property
+    def userids(self):
         return self.keys()
 
-    def get(self, id):
+    @property
+    def users(self):
+        return self.values()
+
+    def get_user(self, id):
         return self[id]
 
 class UserInfo(object):
