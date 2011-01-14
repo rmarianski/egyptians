@@ -8,13 +8,8 @@ from egyptians.interfaces import IUserInfo
 class User(Persistent):
     implements(IUser)
 
-    name = u''
-    email = u''
-    password = u''
-
-    def __init__(self, id, **kwargs):
+    def __init__(self, id):
         self.id = id
-        self.__dict__.update(kwargs)
 
 class UserFolder(Folder):
     implements(IUserFolder)
@@ -46,13 +41,13 @@ class UserInfo(object):
         return self.context.id
 
     def _get_name(self):
-        return self.context.name
+        return getattr(self.context, 'name', u'')
     def _set_name(self, name):
         self.context.name = name
     name = property(_get_name, _set_name)
 
     def _get_email(self):
-        return self.context.email
+        return getattr(self.context, 'email', u'')
     def _set_email(self, email):
         self.context.email = email
     email = property(_get_email, _set_email)

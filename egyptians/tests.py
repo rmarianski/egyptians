@@ -13,13 +13,13 @@ class UserTests(unittest.TestCase):
         return self._getTargetClass()(*args, **kw)
 
     def test_create_user(self):
-        user = self._makeOne(id=u'marty')
+        user = self._makeOne(u'marty')
         self.assertEquals(u'marty', user.id)
 
     def test_user_implements_interface(self):
         from zope.interface.verify import verifyObject
         from egyptians.interfaces import IUser
-        user = self._makeOne(id=u'mcfly')
+        user = self._makeOne(u'mcfly')
         verifyObject(IUser, user)
 
 
@@ -54,10 +54,8 @@ class UserInfoTests(unittest.TestCase):
 
     def _makeUser(self):
         from egyptians.user import User
-        return User(u'biff',
-                    name=u'Biff Tannen',
-                    email=u'biff@example.com',
-                    )
+        user = User(u'biff')
+        return user
 
     def test_userinfo_implements_interface(self):
         from zope.interface.verify import verifyObject
@@ -66,12 +64,21 @@ class UserInfoTests(unittest.TestCase):
         userinfo = self._makeOne(user)
         verifyObject(IUserInfo, userinfo)
 
-    def test_userinfo_readproperties(self):
+    def test_userinfo_readproperties_set(self):
         user = self._makeUser()
         userinfo = self._makeOne(user)
+        userinfo.name = u'Biff Tannen'
+        userinfo.email = u'biff@example.com'
         self.assertEquals(u'biff', userinfo.id)
         self.assertEquals(u'Biff Tannen', userinfo.name)
         self.assertEquals(u'biff@example.com', userinfo.email)
+
+    def test_userinfo_readproperties_notset(self):
+        user = self._makeUser()
+        userinfo = self._makeOne(user)
+        self.assertEquals(u'biff', userinfo.id)
+        self.assertEquals(u'', userinfo.name)
+        self.assertEquals(u'', userinfo.email)
 
     def test_userinfo_writeproperties(self):
         user = self._makeUser()
@@ -94,9 +101,9 @@ class UserAuthTests(unittest.TestCase):
 
     def _makeUser(self):
         from egyptians.user import User
-        return User(u'emmett-brown',
-                    password=u'flux capacitor',
-                    )
+        user = User(u'emmett-brown')
+        user.password = u'flux capacitor'
+        return user
 
     def test_userauth_implements_interface(self):
         from zope.interface.verify import verifyObject
