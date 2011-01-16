@@ -1,8 +1,5 @@
 import unittest
 
-from pyramid.config import Configurator
-from pyramid import testing
-
 class UserTests(unittest.TestCase):
 
     def _getTargetClass(self):
@@ -154,45 +151,13 @@ class UserAuthTests(unittest.TestCase):
         userauth = self._makeOne(user)
         verifyObject(IUserAuth, userauth)
 
-    def test_userauth_extract_credentials(self):
+    def test_userauth_getpassword(self):
         user = self._makeUser()
         userauth = self._makeOne(user)
-        self.assertEquals(u'flux capacitor', userauth.extract_credentials())
+        self.assertEquals(u'flux capacitor', userauth.password)
 
-    def test_userauth_update_credentials(self):
+    def test_userauth_setpassword(self):
         user = self._makeUser()
         userauth = self._makeOne(user)
-        userauth.update_credentials(u'delorean')
-        self.assertEquals(u'delorean', userauth.extract_credentials())
-
-    def test_userauth_authenticate(self):
-        user = self._makeUser()
-        userauth = self._makeOne(user)
-        self.failUnless(userauth.authenticate(u'flux capacitor'))
-
-
-class PasswordHasherTests(unittest.TestCase):
-
-    def _getTargetClass(self):
-        from egyptians.auth import PasswordHasher
-        return PasswordHasher
-
-    def _makeOne(self, *args, **kw):
-        return self._getTargetClass()(*args, **kw)
-
-    def test_hasher_implements_interface(self):
-        from egyptians.interfaces import IPasswordHasher
-        from zope.interface.verify import verifyObject
-        hasher = self._makeOne()
-        verifyObject(IPasswordHasher, hasher)
-
-    def test_hash(self):
-        hasher = self._makeOne()
-        hash = hasher.hash(u'flux capacitor')
-        self.assertEquals(
-            '9fc09459ed54aa1a6019fa1eb9d3234cc4dcb50ff8cd32a8c233d334',
-            hash)
-
-    def test_scheme(self):
-        hasher = self._makeOne()
-        self.assertEquals('sha224', hasher.scheme)
+        userauth.password = u'delorean'
+        self.assertEquals(u'delorean', userauth.password)

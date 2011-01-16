@@ -7,6 +7,7 @@ requires = [
     'ZODB3',
     'pyramid',
     'repoze.folder',
+    'zope.password',
     ]
 
 setup(name='egyptians',

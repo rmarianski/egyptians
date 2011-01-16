@@ -1,9 +1,9 @@
 import colander
 import deform
 
-from egyptians.interfaces import IPasswordHasher
 from egyptians.interfaces import IUserAuth
 from pyramid.security import remember
+from zope.password.interfaces import IPasswordManager
 
 class LoginSchema(colander.Schema):
     login = colander.SchemaNode(colander.String())
@@ -20,10 +20,11 @@ def check_password_validator(context, registry):
             exc['login'] = u'Unknown user'
             raise exc
         password = value['password']
-        password_hasher = registry.getUtility(IPasswordHasher)
+        password_manager = registry.getUtility(IPasswordManager)
         user_auth = registry.getAdapter(user, IUserAuth)
-        hashed_password = password_hasher.hash(password)
-        if not user_auth.authenticate(hashed_password):
+        ok = password_manager.checkPassword(user_auth.password,
+                                            password)
+        if not ok:
             exc = colander.Invalid(node, u'Bad password')
             exc['password'] = u'Bad password'
             raise exc

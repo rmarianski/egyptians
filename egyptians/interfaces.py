@@ -34,20 +34,4 @@ class IUserInfo(Interface):
 class IUserAuth(Interface):
     """authentication api"""
 
-    def extract_credentials():
-        """return the credentials or password from user object"""
-
-    def update_credentials(self):
-        """update the credentials for user"""
-
-    def authenticate(password):
-        """returns true if password matches"""
-
-
-class IPasswordHasher(Interface):
-    """handles password hashing"""
-
-    def hash(cleartext):
-        """returns the hash of a cleartext password"""
-
-    scheme = Attribute("string identifier of the password hashing scheme")
+    password = Attribute("user password")
