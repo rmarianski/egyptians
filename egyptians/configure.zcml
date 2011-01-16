@@ -13,4 +13,10 @@
       factory=".auth.UserAuth"
       />
 
+  <adapter
+      for=".interfaces.IUser"
+      provides=".interfaces.IUserGroups"
+      factory=".user.UserGroups"
+      />
+
 </configure>

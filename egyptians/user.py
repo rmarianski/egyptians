@@ -1,8 +1,10 @@
 from persistent import Persistent
+from persistent.list import PersistentList
 from repoze.folder import Folder
 from zope.interface import implements
 from egyptians.interfaces import IUser
 from egyptians.interfaces import IUserFolder
+from egyptians.interfaces import IUserGroups
 from egyptians.interfaces import IUserInfo
 
 class User(Persistent):
@@ -31,6 +33,7 @@ class UserFolder(Folder):
     def get_user(self, id):
         return self[id]
 
+
 class UserInfo(object):
     """simple adapter implementation
 
@@ -56,3 +59,26 @@ class UserInfo(object):
     def _set_email(self, email):
         self.context.email = email
     email = property(_get_email, _set_email)
+
+
+class UserGroups(object):
+    """adapter to manage a user's groups"""
+
+    implements(IUserGroups)
+
+    def __init__(self, context):
+        self.context = context
+
+    def _get_groups(self):
+        return getattr(self.context, 'groups', [])
+    def _set_groups(self, groups):
+        self.context.groups = groups
+    groups = property(_get_groups, _set_groups)
+
+    def add_group(self, group):
+        if getattr(self.context, 'groups', None) is None:
+            self.context.groups = PersistentList()
+        self.context.groups.append(group)
+
+    def remove_group(self, group):
+        self.context.groups.remove(group)

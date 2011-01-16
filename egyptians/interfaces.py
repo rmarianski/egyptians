@@ -35,3 +35,14 @@ class IUserAuth(Interface):
     """authentication api"""
 
     password = Attribute("user password")
+
+class IUserGroups(Interface):
+    """management around a user's groups"""
+
+    groups = Attribute("sequence of groups")
+
+    def add_group(group):
+        """add a new group"""
+
+    def remove_group(group):
+        """remove a group"""

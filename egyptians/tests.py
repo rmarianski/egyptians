@@ -161,3 +161,37 @@ class UserAuthTests(unittest.TestCase):
         userauth = self._makeOne(user)
         userauth.password = u'delorean'
         self.assertEquals(u'delorean', userauth.password)
+
+
+class UserGroupsTests(unittest.TestCase):
+
+    def _getTargetClass(self):
+        from egyptians.user import UserGroups
+        return UserGroups
+
+    def _makeOne(self, *args, **kw):
+        return self._getTargetClass()(*args, **kw)
+
+    def _makeUser(self):
+        from egyptians.user import User
+        user = User(u'emmett-brown')
+        return user
+
+    def test_usergroups_implements_interface(self):
+        from zope.interface.verify import verifyObject
+        from egyptians.interfaces import IUserGroups
+        user = self._makeUser()
+        usergroups = self._makeOne(user)
+        verifyObject(IUserGroups, usergroups)
+
+    def test_usergroups_emptygroups(self):
+        user = self._makeUser()
+        usergroups = self._makeOne(user)
+        self.failIf(usergroups.groups)
+
+    def test_usergroups_addgroup(self):
+        user = self._makeUser()
+        usergroups = self._makeOne(user)
+        usergroups.add_group('scientist')
+        self.assertEquals(1, len(usergroups.groups))
+        self.assertEquals('scientist', usergroups.groups[0])

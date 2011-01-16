@@ -2,7 +2,10 @@ import colander
 import deform
 
 from egyptians.interfaces import IUserAuth
+from egyptians.interfaces import IUserGroups
+from pyramid.security import forget
 from pyramid.security import remember
+from webob.exc import HTTPFound
 from zope.password.interfaces import IPasswordManager
 
 class LoginSchema(colander.Schema):
@@ -54,3 +57,10 @@ def logout_view(context, request):
     headers = forget(request)
     return HTTPFound(location='/', headers=headers)
 
+def manage_groups_view(context, request):
+    # manage groups for a particular user (context)
+    userid = context.id
+    groups = request.registry.getAdapter(context, IUserGroups).groups
+    return dict(groups=groups,
+                userid=userid,
+                )
