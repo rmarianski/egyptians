@@ -1,0 +1,16 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+  <include package="pyramid.includes" />
+
+  <utility
+      provides="zope.password.interfaces.IPasswordManager"
+      factory="zope.password.password.SSHAPasswordManager"
+      />
+
+  <adapter
+      for=".interfaces.IUser"
+      provides=".interfaces.IUserAuth"
+      factory=".auth.UserAuth"
+      />
+
+</configure>
