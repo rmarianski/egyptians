@@ -44,9 +44,13 @@ def login_view(context, request):
 
         principal = appstruct['login']
         headers = remember(request, principal)
-        from webob import Response
-        return Response(body=u'Great success',
-                        headers=headers,
-                        )
+        return HTTPFound(location='/',
+                         headers=headers,
+                         )
 
     return {'form': login_form.render()}
+
+def logout_view(context, request):
+    headers = forget(request)
+    return HTTPFound(location='/', headers=headers)
+
