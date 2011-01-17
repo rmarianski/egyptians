@@ -57,10 +57,32 @@ def logout_view(context, request):
     headers = forget(request)
     return HTTPFound(location='/', headers=headers)
 
+class Group(colander.Schema):
+    group_name = colander.SchemaNode(colander.String())
+
+class Groups(colander.SequenceSchema):
+    group = Group()
+
+class Schema(colander.Schema):
+    groups = Groups()
+
 def manage_groups_view(context, request):
-    # manage groups for a particular user (context)
-    userid = context.id
-    groups = request.registry.getAdapter(context, IUserGroups).groups
-    return dict(groups=groups,
-                userid=userid,
-                )
+    schema = Schema()
+    form = deform.Form(schema, buttons=('submit',))
+    usergroup_manager = request.registry.getAdapter(context, IUserGroups)
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+        except deform.ValidationFailure, e:
+            return dict(form=e.render())
+
+        new_groups = [x['group_name'] for x in appstruct['groups']]
+        from persistent.list import PersistentList
+        usergroup_manager.groups = PersistentList(new_groups)
+        return HTTPFound(location=request.url)
+
+    existing_groups = dict(
+        groups=[dict(group_name=x) for x in usergroup_manager.groups])
+
+    return dict(form=form.render(existing_groups))
