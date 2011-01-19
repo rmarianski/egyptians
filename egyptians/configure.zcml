@@ -19,4 +19,10 @@
       factory=".user.UserGroups"
       />
 
+  <adapter
+      for=".interfaces.IUser"
+      provides=".interfaces.IUserInfo"
+      factory=".user.UserInfo"
+      />
+
 </configure>

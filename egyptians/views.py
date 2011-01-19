@@ -3,8 +3,12 @@ import deform
 
 from egyptians.interfaces import IUserAuth
 from egyptians.interfaces import IUserGroups
+from interfaces import IUserInfo
 from pyramid.security import forget
 from pyramid.security import remember
+from pyramid.url import resource_url
+from user import User
+from utils import make_slug
 from webob.exc import HTTPFound
 from zope.password.interfaces import IPasswordManager
 
@@ -57,17 +61,42 @@ def logout_view(context, request):
     headers = forget(request)
     return HTTPFound(location='/', headers=headers)
 
+class RegisterSchema(colander.Schema):
+    username = colander.SchemaNode(colander.String())
+    name = colander.SchemaNode(colander.String(), missing=u'')
+    email = colander.SchemaNode(colander.String())
+
+def register_view(context, request):
+    schema = RegisterSchema()
+    form = deform.Form(schema, buttons=('submit',))
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = form.validate(controls)
+        except deform.ValidationFailure, e:
+            return dict(form=e.render())
+
+        slug = make_slug(appstruct['username'])
+        user = User(slug)
+        userinfo = request.registry.getAdapter(user, IUserInfo)
+        userinfo.name = appstruct['name']
+        userinfo.email = appstruct['email']
+        context[slug] = user
+        return HTTPFound(location=resource_url(user, request))
+
+    return dict(form=form.render())
+
 class Group(colander.Schema):
     group_name = colander.SchemaNode(colander.String())
 
 class Groups(colander.SequenceSchema):
     group = Group()
 
-class Schema(colander.Schema):
+class GroupSchema(colander.Schema):
     groups = Groups()
 
 def manage_groups_view(context, request):
-    schema = Schema()
+    schema = GroupSchema()
     form = deform.Form(schema, buttons=('submit',))
     usergroup_manager = request.registry.getAdapter(context, IUserGroups)
     if 'submit' in request.POST:
