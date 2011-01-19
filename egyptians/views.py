@@ -61,13 +61,13 @@ def logout_view(context, request):
     headers = forget(request)
     return HTTPFound(location='/', headers=headers)
 
-class RegisterSchema(colander.Schema):
+class UserSchema(colander.Schema):
     username = colander.SchemaNode(colander.String())
     name = colander.SchemaNode(colander.String(), missing=u'')
     email = colander.SchemaNode(colander.String())
 
 def register_view(context, request):
-    schema = RegisterSchema()
+    schema = UserSchema()
     form = deform.Form(schema, buttons=('submit',))
     if 'submit' in request.POST:
         controls = request.POST.items()
@@ -85,6 +85,17 @@ def register_view(context, request):
         return HTTPFound(location=resource_url(user, request))
 
     return dict(form=form.render())
+
+def user_view(context, request):
+    schema = UserSchema()
+    form = deform.Form(schema, buttons=('submit',))
+    userinfo = request.registry.getAdapter(context, IUserInfo)
+    return dict(form=form.render(
+            dict(username=context.id,
+                 name=userinfo.name,
+                 email=userinfo.email,
+                 ),
+            readonly=True))
 
 class Group(colander.Schema):
     group_name = colander.SchemaNode(colander.String())
