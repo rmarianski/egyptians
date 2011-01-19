@@ -126,3 +126,14 @@ def manage_groups_view(context, request):
         groups=[dict(group_name=x) for x in usergroup_manager.groups])
 
     return dict(form=form.render(existing_groups))
+
+def users_view(context, request):
+    reg = request.registry
+    def make_user_data(user):
+        userinfo = reg.getAdapter(user, IUserInfo)
+        return dict(id=user.id,
+                    name=userinfo.name or user.id,
+                    url=resource_url(user, request),
+                    )
+    users_data = [make_user_data(x) for x in context.values()]
+    return dict(users_data=users_data)
